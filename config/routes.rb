@@ -3,4 +3,15 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "hello#world"
+
+  namespace :api do
+    namespace :v1 do
+      resources :questions, only: [:index] do
+        member do
+          put :update_counter
+        end
+      end
+    end
+  end
+
 end
