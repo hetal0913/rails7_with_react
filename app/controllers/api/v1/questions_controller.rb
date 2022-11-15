@@ -2,7 +2,12 @@ class Api::V1::QuestionsController < ApplicationController
     before_action :get_question, only: [:update_counter]
 
     def index
-        @questions = Question.all
+        if params[:tag].present? && params[:tag] != 'All'
+            @questions = Question.filter_tags(params[:tag])
+        else
+            @questions = Question.all
+        end
+
         render json: @questions, status: :ok
     end
 
