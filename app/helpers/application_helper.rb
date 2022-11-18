@@ -4,7 +4,6 @@ module ApplicationHelper
           render_response(400, "error", "Invalid or Missing parameters.")
           return false
         end
-
         child_params.each do |param_key|
           unless params[main_param_key].has_key?(param_key) && params[main_param_key][param_key].present?
             render_response(400, "error", "Invalid or Missing parameters.")

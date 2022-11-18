@@ -2,6 +2,9 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { useState, useEffect } from "react";
 import QuestionDetail from "./QuestionDetail";
+import ErrorMessage from "./ErrorMessage";
+import Loader from "./Loader";
+import AddQuestion from "./AddQuestion";
 // import useFetch from "../useFetch";
 
 const QuestionList = () => {
@@ -29,9 +32,13 @@ const QuestionList = () => {
         return res.json();
       })
       .then((data) => {
+        if (data.length > 0) {
+          setError(null);
+        } else {
+          setError("There is no matching data available");
+        }
         setQuestionsList(data);
         setIsPending(false);
-        setError(null);
       })
       .catch((err) => {
         if (err.name === "AbortError") {
@@ -49,13 +56,21 @@ const QuestionList = () => {
 
   const handleChange = (e) => {
     setSelectedTag(e.target.value);
-    fetchData("http://localhost:3000/api/v1/questions?tag=" + questionTags[e.target.value].label);
+    setIsPending(true);
+    setQuestionsList([]);
+    fetchData(
+      "http://localhost:3000/api/v1/questions?tag=" +
+        questionTags[e.target.value].label
+    );
   };
 
   return (
     <div className="row">
       <div className="col-lg-10 mx-auto">
-        <p className="lead fw-bold">Filter Options</p>
+        <p className="lead fw-bold">Filter Questions By Tags</p>
+        <button type="button" className="btn btn-primary mt-1 mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          Contribute your Question
+        </button>
         <select
           className="form-select form-select-lg"
           value={selectedTag}
@@ -67,16 +82,18 @@ const QuestionList = () => {
             </option>
           ))}
         </select>
-        {error && <div> {error}</div>}
-        {isPending && <div className="center">Loading...</div>}
-        {questionsList && questionsList.length > 0 ? (
-          questionsList.map((question) => (
-            <QuestionDetail question={question} key={question.id} />
-          ))
-        ) : (
-          <p className="center">There is no data available</p>
+        
+        {error && <ErrorMessage error={error} />}
+        {isPending && (
+          <Loader/>
         )}
+        {questionsList && questionsList.length > 0
+          ? questionsList.map((question) => (
+              <QuestionDetail question={question} key={question.id} />
+            ))
+          : ""}
       </div>
+      <AddQuestion/>
     </div>
   );
 };

@@ -4,7 +4,6 @@ import { useState } from "react";
 
 const QuestionDetail = (props) => {
   let question = props.question;
-  console.log(question);
   const [likeCount, setLikeCount] = useState(question.like_count);
   const [disLikeCount, setDisLikeCount] = useState(question.dislike_count);
 
@@ -13,7 +12,9 @@ const QuestionDetail = (props) => {
       method: 'PUT',
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({"count_for": value})
-    }).then(() => {
+    }).then((res) => {
+      
+      if(res)
       if (value == "like"){
         setLikeCount(prev => prev + 1)
       }else if (value == "dislike"){
@@ -26,8 +27,8 @@ const QuestionDetail = (props) => {
  
   return (
     <div className="card rounded-0 mt-3">
-      <div className="card-body">
-        <h3 className="card-title">{question.title}</h3>
+      <div className="card-body shadow rounded">
+        <h4 className="card-title">{question.title}</h4>
         <p className="lead">
           <span className="badge bg-primary">{question.tag}</span>
         </p>
